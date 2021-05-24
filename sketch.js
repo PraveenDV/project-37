@@ -49,11 +49,16 @@ function setup() {
 
 function draw() {
   background(0);  
-  wall.debug=true;
+  //wall.debug=true;
+
+  camera.position.x=player.x+200; 
+  camera.position.y=player.y-250;
 
   //ground.velocityX=-4;
 
-  console.log(player.y);
+  console.log(player.x);
+
+  wallSpeed=Math.round(frameRate());
 
   fill("yellow");
   textSize(30);
@@ -67,9 +72,9 @@ if(keyDown('enter')){
 
 if(gameState==="play"){
 
- //  player.debug=true;
+  //player.debug=true;
 
- wall.velocityX=5;
+ wall.velocityX=(6+3*wallSpeed/100);
 
  player.velocityY= player.velocityY+0.8;
 
@@ -87,14 +92,33 @@ spawnstones();
 
  if(keyIsDown(RIGHT_ARROW)){
   player.x+=7;
+  
  }
 
+
+
 }
-  
+
+for(var i=0;i<platGrp.length; i++){
+
+if(platGrp.get(i).isTouching(player) || wall.isTouching(player)){
+gameState="end";
+}}
+
+if(gameState==="end"){
+  fill("red");
+  strokeWeight(5);
+  stroke("green");
+  textSize(30);
+  text("Game over!", player.x,  300);
+
+  wall.destroy();
+  //platGrp.destroy();
+  player.destroy();
+}
 
 
-camera.position.x=player.x+200; 
-camera.position.y=player.y-250;
+
   
 //console.log(frameCount);
 
@@ -115,8 +139,8 @@ function spawnstones(){
   
   if(frameCount%120===0){
     stone=createSprite(player.x+800, 580,10, 10);
-    stone.setCollider("circle", 0, 0, 250);
-    stone.debug=true;
+    stone.setCollider("circle", 0, 80, 250);
+   // stone.debug=true;
     stone.lifeTime=50;
     stone.addImage(stoneImg);
     stone.scale=0.2;
