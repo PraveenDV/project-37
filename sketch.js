@@ -8,6 +8,8 @@ var engine,world;
 
 var gameState;
 
+var turns;
+
 function preload(){
  playerImg=loadAnimation("Monkey_01.png","Monkey_02.png","Monkey_03.png","Monkey_04.png",
  "Monkey_05.png","Monkey_06.png","Monkey_07.png","Monkey_08.png","Monkey_09.png","Monkey_10.png");
@@ -41,6 +43,8 @@ function setup() {
  
  gameState="Start";
 
+ turns=5;
+
  ground=createSprite(player.x+400, displayHeight-100, displayWidth*2, 10);
 
   //Engine=engine.run();
@@ -65,6 +69,7 @@ function draw() {
   text("press 'Enter' to play", 500, 500);
   textSize(25);
   text("avoid the stones and don't let the laser touch you", 500, 530);
+  text("Turn:"+turns, player.x+500, 50);  
 
 if(keyDown('enter')){
   gameState="play";
@@ -91,7 +96,7 @@ spawnstones();
  }*/
 
  if(keyIsDown(RIGHT_ARROW)){
-  player.x+=7;
+  player.x+=9;
   
  }
 
@@ -103,6 +108,7 @@ for(var i=0;i<platGrp.length; i++){
 
 if(platGrp.get(i).isTouching(player) || wall.isTouching(player)){
 gameState="end";
+turns=turns-1;
 }}
 
 if(gameState==="end"){
@@ -110,11 +116,18 @@ if(gameState==="end"){
   strokeWeight(5);
   stroke("green");
   textSize(30);
-  text("Game over!", player.x,  300);
-
-  wall.destroy();
-  //platGrp.destroy();
+  text("Game over!", player.x,  250);
+  text("Press space to retry", player.x, 350);
   player.destroy();
+  platGrp.destroyEach();
+  wall.destroy();
+  reset();
+}
+
+if(turns===0){
+  fill("blue");
+  textSize(30);
+  text("Your turns are over!", player.x, 300);
 }
 
 
@@ -158,3 +171,24 @@ function spawnstones(){
    banana.debug=true;
   }
 }*/
+
+function reset(){
+  if(keyDown("space")){
+    
+    gameState="play";
+    player=createSprite(displayWidth-1000,displayHeight-165, 50, 50);
+    player.addAnimation("run", playerImg);
+    player.scale=0.2;
+    wall=createSprite(displayWidth-1350, 300, 10, 2000);
+ wall.setCollider('rectangle', 0,0, 60, 500);
+ wall.addImage(wallImg);
+ wall.scale=1.5;
+
+ if(turns===0){
+   turns=5;
+ }
+
+ }
+
+ 
+}
